@@ -27,6 +27,7 @@ struct ValueComparator {
     std::vector<std::vector<char>> *curChars;
     std::vector<double> *curValue;
 
+    ValueComparator(std::vector<std::vector<char>> *_curChars, std::vector<double> *_curValue);
     bool operator()(const std::vector<char> &a, const std::vector<char> &b) const;
 };
 
@@ -34,6 +35,7 @@ struct WordsValueComparator {
     std::vector<std::string> *curWords;
     std::vector<double> *curWordsValue;
 
+    WordsValueComparator(std::vector<std::string> *_curWords, std::vector<double> *_curWordsValue);
     bool operator()(const std::string &a, const std::string &b) const;
 };
 
@@ -61,11 +63,6 @@ private:
     std::map<std::vector<char>, double, ValueComparator> * getChars(PinyinNode *node, std::string key);
 
     std::map<std::string, double, WordsValueComparator> * getWords(int pos);
-
-    template<typename Out>
-    void split(const std::string &s, char delim, Out result);
-
-    std::vector<std::string> split(const std::string &s, char delim);
 
 public:
     PinyinTireTree();

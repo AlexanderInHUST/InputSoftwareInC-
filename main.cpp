@@ -5,24 +5,23 @@
 #include "model/PinyinTireTree.h"
 
 int main() {
-//    std::string s = "复";
-//    std::vector<char> v;
-//    v.insert(v.end(), s[0]);
-//    v.insert(v.end(), s[1]);
-//    v.insert(v.end(), s[2]);
-//    PinyinTireTree *tireTree = new PinyinTireTree;
-//    tireTree->initial();
-//    std::map<std::vector<char>, double, ValueComparator> *map = tireTree->getCharacters("fu");
+    std::string s = "一";
+    std::vector<char> v;
+    v.insert(v.end(), s[0]);
+    v.insert(v.end(), s[1]);
+    v.insert(v.end(), s[2]);
+    PinyinTireTree *tireTree = new PinyinTireTree;
+    tireTree->initial();
+    std::map<std::vector<char>, double, ValueComparator> *map = tireTree->getCharacters("yi");
 //    std::map<std::string, double, WordsValueComparator> *wordMap = tireTree->chooseCharacter(v);
 //    tireTree->chooseWord(NOT_CHOOSE_S);
-//    std::map<std::string, double, WordsValueComparator>::iterator it;
-//    for (it = wordMap->begin(); it != wordMap->end(); it++) {
-//        std::cout << it->first << " " << it->second << std::endl;
-//    }
-
-    FILE *p = fopen("dic.txt", "r");
-    char c;
-    fscanf(p, "%c", &c);
-    fclose(p);
+    std::map<std::vector<char>, double, ValueComparator>::iterator it;
+    for (it = map->begin(); it != map->end(); it++) {
+        std::string *test = new std::string;
+        test->insert(test->end(), it->first.at(0));
+        test->insert(test->end(), it->first.at(1));
+        test->insert(test->end(), it->first.at(2));
+        std::cout << *test << " " << it->second << std::endl;
+    }
 
 }

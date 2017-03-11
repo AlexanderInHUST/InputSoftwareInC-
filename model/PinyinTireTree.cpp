@@ -7,11 +7,7 @@
 
 PinyinTireTree::PinyinTireTree() {
     config = std::ifstream("../config.is");
-    dic = fopen("../library.is", "wb+");
-    if (dic == NULL)
-        std::cout << "fuck" << std::endl;
-    comparator = new ValueComparator;
-    wordsValueComparator = new WordsValueComparator;
+    dic = fopen("../library.is", "rb+");
 }
 
 // Methods for tree
@@ -72,26 +68,26 @@ std::map<std::vector<char>, double, ValueComparator> *PinyinTireTree::getChars(P
             if (curNode == NULL)
                 curNode = node;
             fseek(dic, node->addressStart, 0);
-            std::map<std::vector<char>, double, ValueComparator> *output = new std::map<std::vector<char>, double, ValueComparator>;
+            std::map<std::vector<char>, double, ValueComparator> *output =
+                    new std::map<std::vector<char>, double, ValueComparator>(ValueComparator(curChars, curValue));
             for (int i = 0; i < node->length; i++) {
                 char singChar[3];
-                char test;
-                fscanf(dic, "%c", &test);
-                std::vector<char> c;
+                fread(singChar, 1, 3, dic);
+                std::vector<char> *c = new std::vector<char>;
                 double d;
                 int a;
                 int l;
-                c.insert(c.end(), singChar[0]);
-                c.insert(c.end(), singChar[1]);
-                c.insert(c.end(), singChar[2]);
+                c->insert(c->end(), singChar[0]);
+                c->insert(c->end(), singChar[1]);
+                c->insert(c->end(), singChar[2]);
                 fread(&d, 8, 1, dic);
                 fread(&a, 4, 1, dic);
                 fread(&l, 4, 1, dic);
-                curChars->insert(curChars->end(), c);
+                curChars->insert(curChars->end(), *c);
                 curValue->insert(curValue->end(), d);
                 curAddress->insert(curAddress->end(), a);
                 curLengthOfWords->insert(curLengthOfWords->end(), l);
-                (*output)[c] = d;
+                (*output)[*c] = d;
             }
             if (!isClear) {
                 for (int i = 0; i < 26; i++) {
@@ -106,7 +102,8 @@ std::map<std::vector<char>, double, ValueComparator> *PinyinTireTree::getChars(P
             }
             return output;
         } else {
-            std::map<std::vector<char>, double, ValueComparator> *output = new std::map<std::vector<char>, double, ValueComparator>;
+            std::map<std::vector<char>, double, ValueComparator> *output =
+                    new std::map<std::vector<char>, double, ValueComparator>(ValueComparator(curChars, curValue));
             isClear = false;
             for (int i = 0; i < 26; i++) {
                 PinyinNode *child = node->children[i];
@@ -158,8 +155,9 @@ std::map<std::string, double, WordsValueComparator> *PinyinTireTree::getWords(in
     int length = (int) (it - curLengthOfWords->begin());
     wordStartAddress = curAddress->at((unsigned long) pos);
     if (wordStartAddress != NO_WORDS) {
-        FILE *wordDic = fopen("../WordsDic.txt", "wb+");
-        std::map<std::string, double, WordsValueComparator> *wordMap = new std::map<std::string, double, WordsValueComparator>;
+        FILE *wordDic = fopen("../WordsDic.txt", "rb+");
+        std::map<std::string, double, WordsValueComparator> *wordMap =
+                new std::map<std::string, double, WordsValueComparator>(WordsValueComparator(curWords, curWordsValue));
         fseek(wordDic, wordStartAddress, 0);
         for (int i = 0; i < length; i++) {
             unsigned short len;
@@ -179,7 +177,7 @@ std::map<std::string, double, WordsValueComparator> *PinyinTireTree::getWords(in
         fclose(wordDic);
         return wordMap;
     }
-    return new std::map<std::string, double, WordsValueComparator>;
+    return new std::map<std::string, double, WordsValueComparator>(WordsValueComparator(curWords, curWordsValue));
 }
 
 void PinyinTireTree::chooseWord(std::string word) {
@@ -190,7 +188,7 @@ void PinyinTireTree::chooseWord(std::string word) {
         double arctanh = (0.5 * (log((1. + x) / (1. - x))) / log(E)) * 1000.;
         double v;
 
-        FILE *wordDic = fopen("../WordsDic.txt", "wb+");
+        FILE *wordDic = fopen("../WordsDic.txt", "rb+");
         fseek(wordDic, wordStartAddress, 0);
         for (int i = 0; i < curWords->size(); i++) {
             if (i == pos) {
@@ -208,12 +206,22 @@ void PinyinTireTree::chooseWord(std::string word) {
     }
 }
 
+ValueComparator::ValueComparator(std::vector<std::vector<char>> *_curChars, std::vector<double> *_curValue) {
+    curChars = _curChars;
+    curValue = _curValue;
+}
+
+WordsValueComparator::WordsValueComparator(std::vector<std::string> *_curWords, std::vector<double> *_curWordsValue) {
+    curWords = _curWords;
+    curWordsValue = _curWordsValue;
+}
+
 bool ValueComparator::operator()(const std::vector<char> &a, const std::vector<char> &b) const {
     std::vector<std::vector<char>>::iterator it1 = std::find(curChars->begin(), curChars->end(), a);
     std::vector<std::vector<char>>::iterator it2 = std::find(curChars->begin(), curChars->end(), b);
     int pos1 = (int) (it1 - curChars->begin());
     int pos2 = (int) (it2 - curChars->begin());
-    return (curValue->at((unsigned long) pos1) <= curValue->at((unsigned long) pos2));
+    return (curValue->at((unsigned long) pos1) >= curValue->at((unsigned long) pos2));
 };
 
 bool WordsValueComparator::operator()(const std::string &a, const std::string &b) const {
@@ -221,21 +229,5 @@ bool WordsValueComparator::operator()(const std::string &a, const std::string &b
     std::vector<std::string>::iterator it2 = std::find(curWords->begin(), curWords->end(), b);
     int pos1 = (int) (it1 - curWords->begin());
     int pos2 = (int) (it2 - curWords->begin());
-    return curWordsValue->at((unsigned long) pos1) <= curWordsValue->at((unsigned long) pos2);
+    return curWordsValue->at((unsigned long) pos1) >= curWordsValue->at((unsigned long) pos2);
 };
-
-template<typename Out>
-void PinyinTireTree::split(const std::string &s, char delim, Out result) {
-    std::stringstream ss;
-    ss.str(s);
-    std::string item;
-    while (std::getline(ss, item, delim)) {
-        *(result++) = item;
-    }
-}
-
-std::vector<std::string> PinyinTireTree::split(const std::string &s, char delim) {
-    std::vector<std::string> elems;
-    split(s, delim, std::back_inserter(elems));
-    return elems;
-}
