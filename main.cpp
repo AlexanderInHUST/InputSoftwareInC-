@@ -1,12 +1,18 @@
 #include <iostream>
+#include <vector>
+#include <algorithm>
 
 int main() {
-    std::string s("我");
-    char c[3];
-    c[0] = s.at(0);
-    c[1] = s.at(1);
-    c[2] = s.at(2);
-    s = std::string(c);
-    std::cout << s << std::endl;
-    return 0;
+    std::vector<std::vector<char>> vector;
+    std::vector<char> s;
+    s.insert(s.end(), '3');
+    s.insert(s.end(), '4');
+    s.insert(s.end(), '5');
+    vector.insert(vector.end(), s);
+    std::vector<char> s1;
+    s1.insert(s1.end(), '3');
+    s1.insert(s1.end(), '4');
+    s1.insert(s1.end(), '5');
+    std::vector<std::vector<char>>::iterator it = std::find(vector.begin(), vector.end(), s1);
+    std::cout << (it == vector.end() - 1) << std::endl;
 }

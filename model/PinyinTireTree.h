@@ -41,7 +41,7 @@ private:
     std::ifstream config;
     FILE *dic;
     PinyinNode *curNode;
-    std::vector<char> *curChars;
+    std::vector<std::vector<char>> *curChars;
     std::vector<double> *curValue;
     std::vector<int> *curAddress;
     std::vector<std::string> *curWords;
@@ -55,9 +55,9 @@ private:
 
     void addNode(PinyinNode *node, std::string key, std::string data);
 
-    std::map<char, double, ValueComparator> getChars(PinyinNode *node, std::string key);
+    std::map<std::vector<char>, double, ValueComparator> * getChars(PinyinNode *node, std::string key);
 
-    std::map<std::string, double, WordsValueComparator> getWords(int pos);
+    std::map<std::string, double, WordsValueComparator> * getWords(int pos);
 
     template<typename Out>
     void split(const std::string &s, char delim, Out result);
@@ -69,9 +69,9 @@ public:
 
     void initial();
 
-    std::map<char, double, ValueComparator> getCharacters(std::string key);
+    std::map<std::vector<char>, double, ValueComparator> * getCharacters(std::string key);
 
-    std::map<std::string, double, WordsValueComparator> chooseCharacter(char ch);
+    std::map<std::string, double, WordsValueComparator> * chooseCharacter(char ch);
 
     void chooseWord(std::string word);
 

@@ -25,7 +25,7 @@ void PinyinTireTree::initial() {
         singleLine >> info[0];
         singleLine >> info[1];
         singleLine >> info[2];
-        pinyinConfig.insert(std::make_pair(info[0], info[1] + " " + info[2]));
+        pinyinConfig[info[0]] = info[1] + " " + info[2];
     }
     for (std::map<std::string, std::string>::iterator it = pinyinConfig.begin();
             it != pinyinConfig.end(); it++) {
@@ -50,8 +50,8 @@ void PinyinTireTree::addNode(PinyinNode *node, std::string key, std::string data
 
 // Methods for character
 
-std::map<char, double, ValueComparator> PinyinTireTree::getCharacters(std::string key) {
-    curChars = new std::vector<char>;
+std::map<std::vector<char>, double, ValueComparator> * PinyinTireTree::getCharacters(std::string key) {
+    curChars = new std::vector<std::vector<char>>;
     curValue = new std::vector<double>;
     curAddress = new std::vector<int>;
     curWords = new std::vector<std::string>;
@@ -61,18 +61,46 @@ std::map<char, double, ValueComparator> PinyinTireTree::getCharacters(std::strin
     return getChars(root, key);
 }
 
-std::map<char, double, ValueComparator> PinyinTireTree::getChars(PinyinNode *node, std::string key) {
+std::map<std::vector<char>, double, ValueComparator> * PinyinTireTree::getChars(PinyinNode *node, std::string key) {
     if (key.length() == 0) {
         if (node->hasChild) {
             if (curNode == NULL)
                 curNode = node;
             fseek(dic, node->addressStart, 0);
-            std::map<char, double, ValueComparator> output;
+            std::map<std::vector<char>, double, ValueComparator> * output = new std::map<std::vector<char>, double, ValueComparator>;
             for (int i = 0; i < node->length; i++) {
                 char singChar[3];
                 fread(singChar, 1, 3, dic);
-                std::string s(singChar);
+                std::vector<char> c;
+                double d;
+                int a;
+                int l;
+                c.insert(c.end(), singChar[0]);
+                c.insert(c.end(), singChar[1]);
+                c.insert(c.end(), singChar[2]);
+                fread(&d, 8, 1, dic);
+                fread(&a, 4, 1, dic);
+                fread(&l, 4, 1, dic);
+                curChars->insert(curChars->end(), c);
+                curValue->insert(curValue->end(), d);
+                curAddress->insert(curAddress->end(), a);
+                curLengthOfWords->insert(curLengthOfWords->end(), l);
+                (* output)[c] = d;
             }
+            if (!isClear) {
+                for (int i = 0; i < 26; i++) {
+                    PinyinNode *child = node->children[i];
+                    if (child != NULL) {
+                        std::map<std::vector<char>, double, ValueComparator> * candidate = getChars(child, key);
+                        if (candidate != NULL) {
+                            output->insert(candidate->begin(), candidate->end());
+                        }
+                    }
+                }
+            }
+            return output;
+        } else {
+
         }
     }
 }
