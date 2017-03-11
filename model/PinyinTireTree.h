@@ -19,8 +19,8 @@
 #define NOT_CHOOSE_S  " "
 
 #define NO_WORDS -1
-#define VALUE_DECAY_RATE 0.99999
-#define VALUE_INCREASE_STEP 1
+#define VALUE_DECAY_RATE 1
+#define VALUE_INCREASE_STEP 0
 #define E 2.71828
 
 struct ValueComparator {

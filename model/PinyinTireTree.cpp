@@ -6,8 +6,10 @@
 #include "PinyinTireTree.h"
 
 PinyinTireTree::PinyinTireTree() {
-    config = std::ifstream("config.is", std::ios::in);
-    dic = fopen("library.is", "wb+");
+    config = std::ifstream("../config.is");
+    dic = fopen("../library.is", "wb+");
+    if (dic == NULL)
+        std::cout << "fuck" << std::endl;
     comparator = new ValueComparator;
     wordsValueComparator = new WordsValueComparator;
 }
@@ -35,9 +37,12 @@ void PinyinTireTree::initial() {
 
 void PinyinTireTree::addNode(PinyinNode *node, std::string key, std::string data) {
     if (key.length() == 0) {
-        std::vector<std::string> info = split(key, ' ');
-        node->addressStart = std::stol(info.at(0));
-        node->length = (short) std::stoi(info.at(1));
+        std::stringstream singleLine(data);
+        std::string info[2];
+        singleLine >> info[0];
+        singleLine >> info[1];
+        node->addressStart = std::stol(info[0]);
+        node->length = (short) std::stoi(info[1]);
         node->hasChild = true;
     } else {
         char cur = key.at(0);
@@ -70,7 +75,8 @@ std::map<std::vector<char>, double, ValueComparator> *PinyinTireTree::getChars(P
             std::map<std::vector<char>, double, ValueComparator> *output = new std::map<std::vector<char>, double, ValueComparator>;
             for (int i = 0; i < node->length; i++) {
                 char singChar[3];
-                fread(singChar, 1, 3, dic);
+                char test;
+                fscanf(dic, "%c", &test);
                 std::vector<char> c;
                 double d;
                 int a;
@@ -152,7 +158,7 @@ std::map<std::string, double, WordsValueComparator> *PinyinTireTree::getWords(in
     int length = (int) (it - curLengthOfWords->begin());
     wordStartAddress = curAddress->at((unsigned long) pos);
     if (wordStartAddress != NO_WORDS) {
-        FILE *wordDic = fopen("WordsDic.txt", "wb+");
+        FILE *wordDic = fopen("../WordsDic.txt", "wb+");
         std::map<std::string, double, WordsValueComparator> *wordMap = new std::map<std::string, double, WordsValueComparator>;
         fseek(wordDic, wordStartAddress, 0);
         for (int i = 0; i < length; i++) {
@@ -170,6 +176,7 @@ std::map<std::string, double, WordsValueComparator> *PinyinTireTree::getWords(in
             curWordsValue->insert(curWordsValue->end(), value);
             (*wordMap)[*word] = value;
         }
+        fclose(wordDic);
         return wordMap;
     }
     return new std::map<std::string, double, WordsValueComparator>;
@@ -183,7 +190,7 @@ void PinyinTireTree::chooseWord(std::string word) {
         double arctanh = (0.5 * (log((1. + x) / (1. - x))) / log(E)) * 1000.;
         double v;
 
-        FILE *wordDic = fopen("WordsDic.txt", "wb+");
+        FILE *wordDic = fopen("../WordsDic.txt", "wb+");
         fseek(wordDic, wordStartAddress, 0);
         for (int i = 0; i < curWords->size(); i++) {
             if (i == pos) {
@@ -191,12 +198,13 @@ void PinyinTireTree::chooseWord(std::string word) {
             } else {
                 v = curWordsValue->at((unsigned long) i) * VALUE_DECAY_RATE;
             }
+            int len;
+            fread(&len, 2, 1, dic);
+            fseek(wordDic, len, 1);
+            fwrite(&v, 8, 1, wordDic);
+            fflush(wordDic);
         }
-        int len;
-        fread(&len, 2, 1, dic);
-        fseek(wordDic, len, 1);
-        fwrite(&v, 8, 1, wordDic);
-        fflush(wordDic);
+        fclose(wordDic);
     }
 }
 
