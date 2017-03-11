@@ -12,6 +12,8 @@
 #include <algorithm>
 #include <fstream>
 #include <cstdio>
+#include <sstream>
+#include "math.h"
 
 #define NOT_CHOOSE ' '
 #define NOT_CHOOSE_S  " "
@@ -19,12 +21,13 @@
 #define NO_WORDS -1
 #define VALUE_DECAY_RATE 0.99999
 #define VALUE_INCREASE_STEP 1
+#define E 2.71828
 
 struct ValueComparator {
-    std::vector<char> *curChars;
+    std::vector<std::vector<char>> *curChars;
     std::vector<double> *curValue;
 
-    bool operator()(const char &a, const double &b) const;
+    bool operator()(const std::vector<char> &a, const std::vector<char> &b) const;
 };
 
 struct WordsValueComparator {
@@ -71,7 +74,7 @@ public:
 
     std::map<std::vector<char>, double, ValueComparator> * getCharacters(std::string key);
 
-    std::map<std::string, double, WordsValueComparator> * chooseCharacter(char ch);
+    std::map<std::string, double, WordsValueComparator> * chooseCharacter(std::vector<char> ch);
 
     void chooseWord(std::string word);
 
