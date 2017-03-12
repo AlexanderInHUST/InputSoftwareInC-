@@ -151,8 +151,7 @@ std::map<std::string, double, WordsValueComparator> *PinyinTireTree::chooseChara
 // Methods for words
 
 std::map<std::string, double, WordsValueComparator> *PinyinTireTree::getWords(int pos) {
-    std::vector<int>::iterator it = std::find(curLengthOfWords->begin(), curLengthOfWords->end(), pos);
-    int length = (int) (it - curLengthOfWords->begin());
+    int length = curLengthOfWords->at((unsigned long) pos);
     wordStartAddress = curAddress->at((unsigned long) pos);
     if (wordStartAddress != NO_WORDS) {
         FILE *wordDic = fopen("../WordsDic.txt", "rb+");
@@ -161,12 +160,15 @@ std::map<std::string, double, WordsValueComparator> *PinyinTireTree::getWords(in
         fseek(wordDic, wordStartAddress, 0);
         for (int i = 0; i < length; i++) {
             unsigned short len;
+            unsigned char lw, lh;
             std::string *word = new std::string;
             char cWord[64];
             double value;
-            fread(&len, 2, 1, dic);
-            fread(cWord, 1, len, dic);
-            fread(&value, 8, 1, dic);
+            fread(&lw, 1, 1, wordDic);
+            fread(&lh, 1, 1, wordDic);
+            len = (lw << 8) | lh;
+            fread(cWord, 1, len, wordDic);
+            fread(&value, 8, 1, wordDic);
             for (int j = 0; j < len; j++) {
                 word->insert(word->end(), cWord[j]);
             }
@@ -196,8 +198,12 @@ void PinyinTireTree::chooseWord(std::string word) {
             } else {
                 v = curWordsValue->at((unsigned long) i) * VALUE_DECAY_RATE;
             }
-            int len;
-            fread(&len, 2, 1, dic);
+            unsigned short len;
+            unsigned char lw, lh;
+            fread(&lw, 1, 1, wordDic);
+            fread(&lh, 1, 1, wordDic);
+            len = (lw << 8) | lh;
+            fread(&len, 2, 1, wordDic);
             fseek(wordDic, len, 1);
             fwrite(&v, 8, 1, wordDic);
             fflush(wordDic);
