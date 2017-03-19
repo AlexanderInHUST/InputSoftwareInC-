@@ -155,7 +155,7 @@ std::vector<WordPair *> *PinyinTrieTree::getWords(int pos) {
     int length = curLengthOfWords->at((unsigned long) pos);
     wordStartAddress = curAddress->at((unsigned long) pos);
     if (wordStartAddress != NO_WORDS) {
-        FILE *wordDic = fopen("../WordsDic.txt", "rb+");
+        FILE *wordDic = fopen("../wordsDic.txt", "rb+");
         std::vector<WordPair *> *output = new std::vector<WordPair *>;
         fseek(wordDic, wordStartAddress, 0);
         for (int i = 0; i < length; i++) {
@@ -192,7 +192,7 @@ void PinyinTrieTree::chooseWord(std::string word) {
         double arctanh = (0.5 * (log((1. + x) / (1. - x))) / log(E)) * 1000.;
         double v;
 
-        FILE *wordDic = fopen("../WordsDic.txt", "rb+");
+        FILE *wordDic = fopen("../wordsDic.txt", "rb+");
         fseek(wordDic, wordStartAddress, 0);
         for (int i = 0; i < curWords->size(); i++) {
             if (i == pos) {

@@ -12,7 +12,7 @@ int main() {
     v.insert(v.end(), s[2]);
     PinyinTrieTree *tireTree = new PinyinTrieTree;
     tireTree->initial();
-    std::vector<CharacterPair *> *map = tireTree->getCharacters("yi");
+    std::vector<CharacterPair *> *map = tireTree->getCharacters("y");
     std::vector<WordPair *> *wordMap = tireTree->chooseCharacter(v);
     tireTree->chooseWord(NOT_CHOOSE_S);
     for(int i = 0; i < map->size(); i++) {
