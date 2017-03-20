@@ -5,14 +5,14 @@
 #include "model/PinyinTrieTree.h"
 
 int main() {
-    std::string s = "异";
+    std::string s = "刷";
     std::vector<char> v;
     v.insert(v.end(), s[0]);
     v.insert(v.end(), s[1]);
     v.insert(v.end(), s[2]);
     PinyinTrieTree *tireTree = new PinyinTrieTree;
     tireTree->initial();
-    std::vector<CharacterPair *> *map = tireTree->getCharacters("y");
+    std::vector<CharacterPair *> *map = tireTree->getCharacters("j");
     std::vector<WordPair *> *wordMap = tireTree->chooseCharacter(v);
     tireTree->chooseWord(NOT_CHOOSE_S);
     for(int i = 0; i < map->size(); i++) {

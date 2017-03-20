@@ -63,6 +63,9 @@ std::vector<CharacterPair *> *PinyinTrieTree::getCharacters(std::string key) {
 }
 
 std::vector<CharacterPair *> *PinyinTrieTree::getChars(PinyinNode *node, std::string key) {
+    if (node == NULL) {
+        return new std::vector<CharacterPair *>;
+    }
     if (key.length() == 0) {
         if (node->hasChild) {
             if (curNode == NULL)
