@@ -25,6 +25,7 @@ void PinyinTrieTree::initial() {
         singleLine >> info[2];
         pinyinConfig[info[0]] = info[1] + " " + info[2];
     }
+    config.close();
     for (std::map<std::string, std::string>::iterator it = pinyinConfig.begin();
          it != pinyinConfig.end(); it++) {
         addNode(root, it->first, it->second);
@@ -184,7 +185,7 @@ std::vector<WordPair *> *PinyinTrieTree::getWords(int pos) {
         std::sort(output->begin(), output->end(), wordSort);
         return output;
     }
-    return NULL;
+    return new std::vector<WordPair *>;
 }
 
 void PinyinTrieTree::chooseWord(std::string word) {

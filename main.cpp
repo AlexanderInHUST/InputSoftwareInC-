@@ -5,7 +5,7 @@
 #include "model/PinyinTrieTree.h"
 
 int main() {
-    std::string s = "刷";
+    std::string s = "浆";
     std::vector<char> v;
     v.insert(v.end(), s[0]);
     v.insert(v.end(), s[1]);
