@@ -8,3 +8,7 @@ WordPair::WordPair(std::string * _self, double _value) {
     self = _self;
     value = _value;
 }
+
+void WordPair::clear() {
+    delete(self);
+}

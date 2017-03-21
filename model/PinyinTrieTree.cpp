@@ -218,6 +218,16 @@ void PinyinTrieTree::chooseWord(std::string word) {
     }
 }
 
+void PinyinTrieTree::clearTree(PinyinNode * node) {
+    for(int i = 0; i < 26; i++) {
+        if(node->children[i] != NULL) {
+            clearTree(node->children[i]);
+        }
+    }
+    delete(node);
+    node = NULL;
+}
+
 bool PinyinTrieTree::characterSort(const CharacterPair *a, const CharacterPair *b) {
     return a->value > b->value;
 }

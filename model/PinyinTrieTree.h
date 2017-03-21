@@ -52,6 +52,8 @@ private:
 
     bool static wordSort(const WordPair *a, const WordPair *b);
 
+    void clearTree(PinyinNode * node);
+
 public:
     PinyinTrieTree();
 

@@ -15,6 +15,7 @@ public:
     double value;
 
     CharacterPair(std::vector<char> * _self, double _value);
+    void clear();
 };
 
 

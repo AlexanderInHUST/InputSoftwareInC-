@@ -8,3 +8,7 @@ CharacterPair::CharacterPair(std::vector<char> * _self, double _value) {
     self = _self;
     value = _value;
 }
+
+void CharacterPair::clear() {
+    delete(self);
+}

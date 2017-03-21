@@ -14,6 +14,7 @@ public:
     double value;
 
     WordPair(std::string * _self, double _value);
+    void clear();
 };
 
 
