@@ -39,6 +39,9 @@ private:
     std::vector<double> *curWordsValue;
     std::vector<int> *curLengthOfWords;
 
+    std::vector<CharacterPair *> * finalOutputChar;
+    std::vector<WordPair *> * finalOutputWord;
+
     int wordStartAddress;
     bool isClear;
 
@@ -54,6 +57,10 @@ private:
 
     void clearTree(PinyinNode * node);
 
+    void clearCharVector(std::vector<CharacterPair *> * v);
+
+    void clearWordVector(std::vector<WordPair *> * v);
+
 public:
     PinyinTrieTree();
 
@@ -64,6 +71,10 @@ public:
     std::vector<WordPair *> * chooseCharacter(std::vector<char> ch);
 
     void chooseWord(std::string word);
+
+    void finishInput();
+
+    void close();
 
 };
 

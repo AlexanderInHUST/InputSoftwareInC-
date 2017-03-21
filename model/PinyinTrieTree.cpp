@@ -60,7 +60,8 @@ std::vector<CharacterPair *> *PinyinTrieTree::getCharacters(std::string key) {
     curWordsValue = new std::vector<double>;
     curLengthOfWords = new std::vector<int>;
     isClear = true;
-    return getChars(root, key);
+    finalOutputChar = getChars(root, key);
+    return finalOutputChar;
 }
 
 std::vector<CharacterPair *> *PinyinTrieTree::getChars(PinyinNode *node, std::string key) {
@@ -147,10 +148,12 @@ std::vector<WordPair *> *PinyinTrieTree::chooseCharacter(std::vector<char> ch) {
             fflush(dic);
             fseek(dic, 8, 1);
         }
-        return getWords(pos);
+        finalOutputWord = getWords(pos);
+        return finalOutputWord;
     }
     curNode = NULL;
-    return NULL;
+    finalOutputWord = new std::vector<WordPair *>;
+    return finalOutputWord;
 }
 
 // Methods for words
@@ -216,6 +219,42 @@ void PinyinTrieTree::chooseWord(std::string word) {
         }
         fclose(wordDic);
     }
+}
+
+void PinyinTrieTree::finishInput() {
+    delete(curChars);
+    delete(curValue);
+    delete(curAddress);
+    delete(curWords);
+    delete(curWordsValue);
+    delete(curLengthOfWords);
+    clearCharVector(finalOutputChar);
+    clearWordVector(finalOutputWord);
+}
+
+void PinyinTrieTree::close() {
+    clearTree(root);
+    fclose(dic);
+    root = NULL;
+    dic = NULL;
+}
+
+void PinyinTrieTree::clearCharVector(std::vector<CharacterPair *> * v) {
+    for(unsigned long i = 0; i < v->size(); i++) {
+        v->at(i)->clear();
+        delete(v->at(i));
+    }
+    delete(v);
+    v = NULL;
+}
+
+void PinyinTrieTree::clearWordVector(std::vector<WordPair *> *v) {
+    for(unsigned long i = 0; i < v->size(); i++) {
+        v->at(i)->clear();
+        delete(v->at(i));
+    }
+    delete(v);
+    v = NULL;
 }
 
 void PinyinTrieTree::clearTree(PinyinNode * node) {
