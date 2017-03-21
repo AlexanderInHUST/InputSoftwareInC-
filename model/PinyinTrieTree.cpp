@@ -235,6 +235,7 @@ void PinyinTrieTree::finishInput() {
 void PinyinTrieTree::close() {
     clearTree(root);
     fclose(dic);
+    curNode = NULL;
     root = NULL;
     dic = NULL;
 }
@@ -243,6 +244,7 @@ void PinyinTrieTree::clearCharVector(std::vector<CharacterPair *> * v) {
     for(unsigned long i = 0; i < v->size(); i++) {
         v->at(i)->clear();
         delete(v->at(i));
+        v->at(i) = NULL;
     }
     delete(v);
     v = NULL;
@@ -252,6 +254,7 @@ void PinyinTrieTree::clearWordVector(std::vector<WordPair *> *v) {
     for(unsigned long i = 0; i < v->size(); i++) {
         v->at(i)->clear();
         delete(v->at(i));
+        v->at(i) = NULL;
     }
     delete(v);
     v = NULL;
