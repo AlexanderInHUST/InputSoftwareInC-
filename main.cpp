@@ -5,17 +5,54 @@
 #include "model/PinyinTrieTree.h"
 
 int main() {
-    std::string s = "江";
-    std::vector<char> v;
-    v.insert(v.end(), s[0]);
-    v.insert(v.end(), s[1]);
-    v.insert(v.end(), s[2]);
     PinyinTrieTree *tireTree = new PinyinTrieTree;
     tireTree->initial();
-    std::vector<CharacterPair *> *map = tireTree->getCharacters("j");
+    std::string src = "好";
+    std::string py = "hao";
+//    for(int i = 0; i < py.length(); i++) {
+//        std::string s;
+//        s.insert(s.end(), src[i * 3]);
+//        s.insert(s.end(), src[i * 3 + 1]);
+//        s.insert(s.end(), src[i * 3 + 2]);
+//        std::string p;
+//        p.insert(p.end(), py[i]);
+//        std::vector<char> v;
+//        v.insert(v.end(), s[0]);
+//        v.insert(v.end(), s[1]);
+//        v.insert(v.end(), s[2]);
+//        std::vector<CharacterPair *> *map = tireTree->getCharacters(p);
+//        std::vector<WordPair *> *wordMap = tireTree->chooseCharacter(v);
+//        for(auto x : *map) {
+//            std::string s1;
+//            s1.insert(s1.end(), x->self->at(0));
+//            s1.insert(s1.end(), x->self->at(1));
+//            s1.insert(s1.end(), x->self->at(2));
+//            std::cout << s1 << std::endl;
+//        }
+//        for(auto x : *wordMap) {
+//            std::cout << x->self << std::endl;
+//        }
+//        tireTree->chooseWord(NOT_CHOOSE_S);
+//        tireTree->finishInput();
+//    }
+//    tireTree->close();
+    std::vector<char> v;
+    v.insert(v.end(), src[0]);
+    v.insert(v.end(), src[1]);
+    v.insert(v.end(), src[2]);
+    std::vector<CharacterPair *> *map = tireTree->getCharacters(py);
     std::vector<WordPair *> *wordMap = tireTree->chooseCharacter(v);
+    for (auto x : *map) {
+        std::string s1;
+        s1.insert(s1.end(), x->self->at(0));
+        s1.insert(s1.end(), x->self->at(1));
+        s1.insert(s1.end(), x->self->at(2));
+        std::cout << s1 << std::endl;
+    }
+    for (auto x : *wordMap) {
+        std::cout << * x->self << std::endl;
+    }
     tireTree->chooseWord(NOT_CHOOSE_S);
     tireTree->finishInput();
-    tireTree->close();
-    delete(tireTree);
+    delete (tireTree);
 }

@@ -59,6 +59,8 @@ std::vector<CharacterPair *> *PinyinTrieTree::getCharacters(std::string key) {
     curWords = new std::vector<std::string>;
     curWordsValue = new std::vector<double>;
     curLengthOfWords = new std::vector<int>;
+    finalOutputChar = NULL;
+    finalOutputWord = NULL;
     isClear = true;
     finalOutputChar = getChars(root, key);
     return finalOutputChar;
@@ -228,8 +230,12 @@ void PinyinTrieTree::finishInput() {
     delete(curWords);
     delete(curWordsValue);
     delete(curLengthOfWords);
-    clearCharVector(finalOutputChar);
-    clearWordVector(finalOutputWord);
+    if(finalOutputChar != NULL) {
+        clearCharVector(finalOutputChar);
+    }
+    if(finalOutputWord != NULL) {
+        clearWordVector(finalOutputWord);
+    }
 }
 
 void PinyinTrieTree::close() {
