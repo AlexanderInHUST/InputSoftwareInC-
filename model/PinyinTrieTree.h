@@ -20,17 +20,27 @@
 #define NOT_CHOOSE ' '
 #define NOT_CHOOSE_S  " "
 
+#define PINYIN_MODE 1
+#define SHUANGPIN_MODE 2
+
 #define NO_WORDS -1
 #define VALUE_DECAY_RATE 1
 #define VALUE_INCREASE_STEP 0
 #define E 2.71828
 
+
+
 class PinyinTrieTree {
 
 private:
     PinyinNode *root;
-    std::ifstream config;
+    PinyinNode *root_n;
+    PinyinNode *root_d;
+    std::ifstream config_n;
+    std::ifstream config_d;
     FILE *dic;
+    FILE *dic_n;
+    FILE *dic_d;
     PinyinNode *curNode;
     std::vector<std::vector<char>> *curChars;
     std::vector<double> *curValue;
@@ -46,6 +56,8 @@ private:
     bool isClear;
 
     void addNode(PinyinNode *node, std::string key, std::string data);
+
+    void initialDetail(std::ifstream * config, PinyinNode ** root);
 
     std::vector<CharacterPair *> * getChars(PinyinNode *node, std::string key);
 
@@ -65,6 +77,8 @@ public:
     PinyinTrieTree();
 
     void initial();
+
+    void chooseMode(int state);
 
     std::vector<CharacterPair *> * getCharacters(std::string key);
 

@@ -6,18 +6,35 @@
 #include "PinyinTrieTree.h"
 
 PinyinTrieTree::PinyinTrieTree() {
-    config = std::ifstream("../config.is");
-    dic = fopen("../library.is", "rb+");
+    config_n = std::ifstream("../config.is");
+    dic_n = fopen("../library.is", "rb+");
+    config_d = std::ifstream("../config_d.is");
+    dic_d = fopen("../library_d.is", "rb+");
 }
 
 // Methods for tree
 
 void PinyinTrieTree::initial() {
+    initialDetail(&config_n, &(root_n));
+    initialDetail(&config_d, &(root_d));
+}
+
+void PinyinTrieTree::chooseMode(int state) {
+    if (state == PINYIN_MODE) {
+        root = root_n;
+        dic = dic_n;
+    } else {
+        root = root_d;
+        dic = dic_n;
+    }
+}
+
+void PinyinTrieTree::initialDetail(std::ifstream * config, PinyinNode ** root) {
     std::map<std::string, std::string> pinyinConfig;
-    root = new PinyinNode;
+    * root = new PinyinNode;
     char line[32];
     std::string singleConfig;
-    while (config.getline(line, sizeof(line))) {
+    while (config->getline(line, sizeof(line))) {
         std::stringstream singleLine(line);
         std::string info[3];
         singleLine >> info[0];
@@ -25,10 +42,9 @@ void PinyinTrieTree::initial() {
         singleLine >> info[2];
         pinyinConfig[info[0]] = info[1] + " " + info[2];
     }
-    config.close();
-    for (std::map<std::string, std::string>::iterator it = pinyinConfig.begin();
-         it != pinyinConfig.end(); it++) {
-        addNode(root, it->first, it->second);
+    config->close();
+    for (auto it : pinyinConfig) {
+        addNode(*root, it.first, it.second);
     }
 }
 
@@ -43,7 +59,7 @@ void PinyinTrieTree::addNode(PinyinNode *node, std::string key, std::string data
         node->hasChild = true;
     } else {
         char cur = key.at(0);
-        if (node->children[cur - 'a'] == NULL) {
+        if (node->children[cur - 'a'] == nullptr) {
             node->children[cur - 'a'] = new PinyinNode;
         }
         addNode(node->children[cur - 'a'], key.substr(1, key.length() - 1), data);
@@ -59,20 +75,20 @@ std::vector<CharacterPair *> *PinyinTrieTree::getCharacters(std::string key) {
     curWords = new std::vector<std::string>;
     curWordsValue = new std::vector<double>;
     curLengthOfWords = new std::vector<int>;
-    finalOutputChar = NULL;
-    finalOutputWord = NULL;
+    finalOutputChar = nullptr;
+    finalOutputWord = nullptr;
     isClear = true;
     finalOutputChar = getChars(root, key);
     return finalOutputChar;
 }
 
 std::vector<CharacterPair *> *PinyinTrieTree::getChars(PinyinNode *node, std::string key) {
-    if (node == NULL) {
+    if (node == nullptr) {
         return new std::vector<CharacterPair *>;
     }
     if (key.length() == 0) {
         if (node->hasChild) {
-            if (curNode == NULL)
+            if (curNode == nullptr)
                 curNode = node;
             fseek(dic, node->addressStart, 0);
             std::vector<CharacterPair *> *output = new std::vector<CharacterPair *>;
@@ -99,9 +115,9 @@ std::vector<CharacterPair *> *PinyinTrieTree::getChars(PinyinNode *node, std::st
             if (!isClear) {
                 for (int i = 0; i < 26; i++) {
                     PinyinNode *child = node->children[i];
-                    if (child != NULL) {
+                    if (child != nullptr) {
                         std::vector<CharacterPair *> *candidate = getChars(child, key);
-                        if (candidate != NULL) {
+                        if (candidate != nullptr) {
                             output->insert(output->end(), candidate->begin(), candidate->end());
                         }
                     }
@@ -114,9 +130,9 @@ std::vector<CharacterPair *> *PinyinTrieTree::getChars(PinyinNode *node, std::st
             isClear = false;
             for (int i = 0; i < 26; i++) {
                 PinyinNode *child = node->children[i];
-                if (child != NULL) {
+                if (child != nullptr) {
                     std::vector<CharacterPair *> *candidate = getChars(child, key);
-                    if (candidate != NULL) {
+                    if (candidate != nullptr) {
                         output->insert(output->end(), candidate->begin(), candidate->end());
                     }
                 }
@@ -153,7 +169,7 @@ std::vector<WordPair *> *PinyinTrieTree::chooseCharacter(std::vector<char> ch) {
         finalOutputWord = getWords(pos);
         return finalOutputWord;
     }
-    curNode = NULL;
+    curNode = nullptr;
     finalOutputWord = new std::vector<WordPair *>;
     return finalOutputWord;
 }
@@ -230,50 +246,51 @@ void PinyinTrieTree::finishInput() {
     delete(curWords);
     delete(curWordsValue);
     delete(curLengthOfWords);
-    if(finalOutputChar != NULL) {
+    if(finalOutputChar != nullptr) {
         clearCharVector(finalOutputChar);
     }
-    if(finalOutputWord != NULL) {
+    if(finalOutputWord != nullptr) {
         clearWordVector(finalOutputWord);
     }
 }
 
 void PinyinTrieTree::close() {
     clearTree(root);
-    fclose(dic);
-    curNode = NULL;
-    root = NULL;
-    dic = NULL;
+    fclose(dic_n);
+    fclose(dic_d);
+    curNode = nullptr;
+    root = nullptr;
+    dic = nullptr;
 }
 
 void PinyinTrieTree::clearCharVector(std::vector<CharacterPair *> * v) {
     for(unsigned long i = 0; i < v->size(); i++) {
         v->at(i)->clear();
         delete(v->at(i));
-        v->at(i) = NULL;
+        v->at(i) = nullptr;
     }
     delete(v);
-    v = NULL;
+    v = nullptr;
 }
 
 void PinyinTrieTree::clearWordVector(std::vector<WordPair *> *v) {
     for(unsigned long i = 0; i < v->size(); i++) {
         v->at(i)->clear();
         delete(v->at(i));
-        v->at(i) = NULL;
+        v->at(i) = nullptr;
     }
     delete(v);
-    v = NULL;
+    v = nullptr;
 }
 
 void PinyinTrieTree::clearTree(PinyinNode * node) {
     for(int i = 0; i < 26; i++) {
-        if(node->children[i] != NULL) {
+        if(node->children[i] != nullptr) {
             clearTree(node->children[i]);
         }
     }
     delete(node);
-    node = NULL;
+    node = nullptr;
 }
 
 bool PinyinTrieTree::characterSort(const CharacterPair *a, const CharacterPair *b) {

@@ -7,8 +7,10 @@
 int main() {
     PinyinTrieTree *tireTree = new PinyinTrieTree;
     tireTree->initial();
-    std::string src = "好";
-    std::string py = "hao";
+    tireTree->chooseMode(PINYIN_MODE);
+    std::string src = "哈";
+    std::string py = "ha";
+
 //    for(int i = 0; i < py.length(); i++) {
 //        std::string s;
 //        s.insert(s.end(), src[i * 3]);
@@ -36,6 +38,7 @@ int main() {
 //        tireTree->finishInput();
 //    }
 //    tireTree->close();
+
     std::vector<char> v;
     v.insert(v.end(), src[0]);
     v.insert(v.end(), src[1]);

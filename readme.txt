@@ -1,0 +1,1 @@
+Change dot into blank when update the dictionary.
