@@ -75,6 +75,7 @@ std::vector<CharacterPair *> *PinyinTrieTree::getCharacters(std::string key) {
     curWords = new std::vector<std::string>;
     curWordsValue = new std::vector<double>;
     curLengthOfWords = new std::vector<int>;
+    curNode = nullptr;
     finalOutputChar = nullptr;
     finalOutputWord = nullptr;
     isClear = true;
