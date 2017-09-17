@@ -152,7 +152,7 @@ std::vector<WordPair *> *PinyinTrieTree::chooseCharacter(std::vector<char> ch) {
         std::vector<std::vector<char>>::iterator it = std::find(curChars->begin(), curChars->end(), ch);
         int pos = (int) (it - curChars->begin());
         double x = curValue->at((unsigned long) pos);
-        double arctanh = (0.5 * (log((1. + x) / (1. - x))) / log(E)) * 1000.;
+        double arctanh = (0.5 * (log((1. + x) / (1. - x))) / log(EVALUE)) * 1000.;
         double v;
 
         fseek(dic, curNode->addressStart, 0);
@@ -215,7 +215,7 @@ void PinyinTrieTree::chooseWord(std::string word) {
         std::vector<std::string>::iterator it = std::find(curWords->begin(), curWords->end(), word);
         int pos = (int) (it - curWords->begin());
         double x = curValue->at((unsigned long) pos);
-        double arctanh = (0.5 * (log((1. + x) / (1. - x))) / log(E)) * 1000.;
+        double arctanh = (0.5 * (log((1. + x) / (1. - x))) / log(EVALUE)) * 1000.;
         double v;
 
         FILE *wordDic = fopen("../wordsDic.txt", "rb+");
