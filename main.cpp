@@ -13,8 +13,8 @@ int main() {
     tireTree->initial();
 
     tireTree->chooseMode(SHUANGPIN_MODE);
-    std::string src = "怕";
-    std::string py = "pa";
+    std::string src = "啊";
+    std::string py = "a";
     std::vector<char> v;
     v.insert(v.end(), src[0]);
     v.insert(v.end(), src[1]);
@@ -34,8 +34,8 @@ int main() {
     tireTree->chooseWord(NOT_CHOOSE_S);
 
     tireTree->chooseMode(PINYIN_MODE);
-    src = "怕";
-    py = "pa";
+    src = "啊";
+    py = "a";
     v.clear();
     v.insert(v.end(), src[0]);
     v.insert(v.end(), src[1]);
